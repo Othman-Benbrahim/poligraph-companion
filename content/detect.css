@@ -1,0 +1,34 @@
+/* Détection Poligraph Companion — styles volontairement préfixés et
+   discrets pour ne jamais dégrader la page hôte. */
+
+mark.plg-mark {
+  background: transparent;
+  color: inherit;
+  border-bottom: 2px dotted #2f4b8f;
+  cursor: help;
+  padding: 0;
+}
+
+.plg-tooltip {
+  position: absolute;
+  z-index: 2147483647;
+  max-width: 320px;
+  background: #f7f6f2;
+  color: #1c2333;
+  border: 1px solid #e2dfd6;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(28, 35, 51, 0.18);
+  padding: 10px 12px;
+  font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  text-align: left;
+}
+.plg-tooltip .plg-name { font-weight: 700; font-size: 14px; }
+.plg-tooltip .plg-meta { color: #5a6072; font-size: 12px; margin-top: 1px; }
+.plg-tooltip .plg-counts { margin-top: 6px; font-size: 12.5px; }
+.plg-tooltip .plg-legal { color: #5a6072; font-size: 11px; margin-top: 3px; }
+.plg-tooltip a {
+  display: inline-block; margin-top: 7px;
+  color: #2f4b8f; font-weight: 600; font-size: 12.5px;
+  text-decoration: none;
+}
+.plg-tooltip a:hover { text-decoration: underline; }
