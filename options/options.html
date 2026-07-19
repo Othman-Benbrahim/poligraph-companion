@@ -1,1 +1,40 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Poligraph Companion — Réglages</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main>
+    <h1><span class="brand-dot"></span>Poligraph Companion — Assistant IA</h1>
+    <p class="lede">L'assistant fonctionne en <strong>BYOK</strong> : vous fournissez votre propre clé
+    (ou un modèle local via Ollama / LM Studio, sans clé). Elle est stockée localement
+    dans votre navigateur et n'est envoyée qu'au fournisseur choisi.</p>
 
+    <label for="preset">Fournisseur (préréglage)</label>
+    <select id="preset"></select>
+
+    <label for="baseUrl">Endpoint (URL de base)</label>
+    <input id="baseUrl" type="url" placeholder="https://..." spellcheck="false" />
+
+    <label for="model">Modèle</label>
+    <input id="model" type="text" placeholder="nom du modèle" spellcheck="false" />
+
+    <label for="apiKey">Clé API <span id="key-optional" class="soft" hidden>(non requise pour ce fournisseur)</span></label>
+    <input id="apiKey" type="password" autocomplete="off" spellcheck="false" />
+
+    <div class="row">
+      <button id="save">Enregistrer</button>
+      <button id="test" class="secondary">Tester la connexion</button>
+    </div>
+    <p id="status" role="status"></p>
+
+    <hr />
+    <p class="soft">Les appels aux endpoints distants nécessitent une autorisation d'accès
+    que le navigateur demandera à l'enregistrement. Pour Ollama, lancez-le avec
+    <code>OLLAMA_ORIGINS=moz-extension://* ollama serve</code> (Firefox) afin d'autoriser l'extension.</p>
+  </main>
+  <script type="module" src="options.js"></script>
+</body>
+</html>
