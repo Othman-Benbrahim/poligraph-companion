@@ -1,1 +1,42 @@
+:root {
+  --paper: #f7f6f2; --ink: #1c2333; --ink-soft: #5a6072;
+  --ligne: #e2dfd6; --encre: #2f4b8f;
+  --timbre-rouge: #a3271e; --timbre-ambre: #9a6b00; --timbre-vert: #2f6b3a;
+}
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+.topbar { display: flex; align-items: center; padding: 12px 20px; border-bottom: 1px solid var(--ligne); background: #fff; }
+.brand { font-weight: 700; }
+.brand em { font-style: normal; font-weight: 400; color: var(--ink-soft); }
+.brand-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--encre); margin-right: 7px; }
 
+main { max-width: 900px; margin: 0 auto; padding: 24px 20px 40px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 640px) { .grid { grid-template-columns: 1fr; } }
+
+.pick {
+  width: 100%; padding: 10px 12px; font-size: 14px;
+  border: 1px solid var(--ligne); border-radius: 8px; background: #fff; color: var(--ink);
+}
+.pick:focus-visible { outline: 2px solid var(--encre); }
+
+.suggest { list-style: none; padding: 4px; margin-top: 4px; background: #fff; border: 1px solid var(--ligne); border-radius: 8px; }
+.suggest li { padding: 7px 10px; border-radius: 6px; cursor: pointer; }
+.suggest li:hover { background: #ecebe4; }
+.suggest .s-meta { color: var(--ink-soft); font-size: 12px; }
+
+.card { margin-top: 14px; background: #fff; border: 1px solid var(--ligne); border-radius: 10px; padding: 14px; }
+.card .c-head { display: flex; gap: 12px; align-items: center; margin-bottom: 10px; }
+.card img { width: 56px; height: 56px; border-radius: 8px; object-fit: cover; border: 1px solid var(--ligne); }
+.card h2 { font-size: 17px; }
+.card .c-sub { color: var(--ink-soft); font-size: 12.5px; }
+.card dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 10px; font-size: 13px; }
+.card dt { color: var(--ink-soft); }
+.card dd { margin: 0; }
+.card a { color: var(--encre); font-weight: 600; font-size: 13px; text-decoration: none; display: inline-block; margin-top: 10px; }
+.card a:hover { text-decoration: underline; }
+.n-red { color: var(--timbre-rouge); font-weight: 700; }
+.n-amber { color: var(--timbre-ambre); font-weight: 700; }
+.n-ok { color: var(--timbre-vert); }
+
+.legal { margin-top: 24px; font-size: 12px; color: var(--ink-soft); border-top: 1px solid var(--ligne); padding-top: 10px; }

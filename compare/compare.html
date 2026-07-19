@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Comparateur — Poligraph Companion</title>
+  <link rel="stylesheet" href="compare.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand"><span class="brand-dot"></span>Comparateur <em>Poligraph Companion</em></span>
+  </header>
+
+  <main>
+    <div class="grid">
+      <section class="col" data-side="a">
+        <input type="search" class="pick" placeholder="Rechercher le 1er élu…" autocomplete="off" />
+        <ul class="suggest" hidden></ul>
+        <div class="card" hidden></div>
+      </section>
+      <section class="col" data-side="b">
+        <input type="search" class="pick" placeholder="Rechercher le 2e élu…" autocomplete="off" />
+        <ul class="suggest" hidden></ul>
+        <div class="card" hidden></div>
+      </section>
+    </div>
+    <p class="legal">⚖ Comparaison factuelle des données locales (Poligraph, Wikidata, Datan).
+    Les compteurs d'affaires mélangent des statuts judiciaires différents — la présomption
+    d'innocence s'applique ; consultez les fiches pour le détail. Les scores d'activité sont
+    descriptifs, pas des notes.</p>
+  </main>
+
+  <script type="module" src="compare.js"></script>
+</body>
+</html>
