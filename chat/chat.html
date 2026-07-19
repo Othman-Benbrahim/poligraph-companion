@@ -1,1 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Assistant — Poligraph Companion</title>
+  <link rel="stylesheet" href="chat.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand"><span class="brand-dot"></span>Assistant <em>Poligraph Companion</em></span>
+    <span id="model-badge" class="badge"></span>
+    <button id="btn-settings" class="ghost" title="Réglages">⚙</button>
+  </header>
 
+  <main id="thread" aria-live="polite">
+    <div class="msg assistant">
+      Posez une question sur un·e politicien·ne français·e — par exemple :
+      « Quelles sont les affaires en cours de X, et avec quel statut ? »,
+      « Y a-t-il eu des fact-checks sur les déclarations de Y ? »,
+      « Comment Z a-t-il voté récemment ? ».
+      Je réponds uniquement à partir des données Poligraph (et Wikidata pour les partis), avec sources.
+    </div>
+  </main>
+
+  <form id="composer">
+    <textarea id="input" rows="2" placeholder="Votre question…" required></textarea>
+    <button id="send" type="submit">Envoyer</button>
+  </form>
+
+  <footer class="legal">
+    ⚖ Présomption d'innocence : les statuts judiciaires sont systématiquement précisés.
+    Réponses générées par le modèle que vous avez configuré — vérifiez les sources citées.
+  </footer>
+
+  <script type="module" src="chat.js"></script>
+</body>
+</html>
