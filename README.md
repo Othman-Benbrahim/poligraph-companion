@@ -1,6 +1,6 @@
 # Poligraph Companion
 
-Extension navigateur (Firefox, pour l'instant) : le portail citoyen sur les
+Extension navigateur (Firefox, portable Chrome) : le portail citoyen sur les
 politiques français. Recherche instantanée, fiches complètes (biographie,
 mandat, contact institutionnel, activité parlementaire, affaires judiciaires,
 fact-checks, votes, déclarations HATVP), détection des élus sur les pages
@@ -8,7 +8,7 @@ web (tooltips, opt-in), suivi d'élus par flux RSS (badge), comparateur,
 fonctionnement hors ligne, et
 assistant IA optionnel en BYOK.
 
-**Version : 0.7.0** — développée en juillet 2026.
+**Version : 0.7.1** — développée en juillet 2026.
 
 ## Sources de données (8)
 
@@ -120,9 +120,9 @@ curl -s "https://poligraph.fr/api/export/politiques" \
 
 ## Pistes non réalisées
 
-- Résumé des rubriques XML des déclarations HATVP (participations
-  financières, activités annexes) — nécessite la spec officielle
-  `opendata-structure.xlsx` ; ne rien parser sans elle.
+- ~~Résumé des rubriques XML HATVP~~ — réalisé en v0.7.1 (structure validée
+  par le code communautaire mdamien/hatvp ; résumé sans montants, tiers
+  en comptage seul, patrimoine exclu).
 - Portage Chrome effectif ; page d'options générales.
 - ~~Détection des noms, suivi RSS, comparateur~~ — réalisés en v0.7.0.
 
