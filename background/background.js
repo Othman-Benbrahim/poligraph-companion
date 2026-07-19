@@ -11,10 +11,13 @@ import "../lib/browser-shim.js";
 import {
   refreshCache, seedFromSnapshotIfEmpty, getMeta, enrichPartiesFromWikidata,
   refreshRNEIfStale, refreshParlementIfStale, refreshHatvpIfStale,
+  buildNameIndex, checkFeedsForFollows, unreadSuiviCount,
 } from "../lib/cache.js";
 
 const REFRESH_ALARM = "poligraph-refresh";
 const REFRESH_PERIOD_MIN = 24 * 60; // 24 h
+const RSS_ALARM = "poligraph-rss";
+const RSS_PERIOD_MIN = 6 * 60; // 6 h
 
 /* ------------------------- installation --------------------------- */
 
@@ -26,6 +29,7 @@ browser.runtime.onInstalled.addListener(async () => {
   });
 
   browser.alarms.create(REFRESH_ALARM, { periodInMinutes: REFRESH_PERIOD_MIN });
+  browser.alarms.create(RSS_ALARM, { periodInMinutes: RSS_PERIOD_MIN });
 
   // Premier remplissage : snapshot embarqué puis tentative réseau.
   await seedFromSnapshotIfEmpty();
@@ -36,7 +40,26 @@ browser.runtime.onInstalled.addListener(async () => {
 
 browser.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === REFRESH_ALARM) tryRefresh();
+  if (alarm.name === RSS_ALARM) checkRss();
 });
+
+/* --------------------------- suivi RSS ----------------------------- */
+
+async function updateBadge() {
+  const n = await unreadSuiviCount();
+  await browser.action.setBadgeText({ text: n > 0 ? String(n) : "" });
+  await browser.action.setBadgeBackgroundColor({ color: "#2f4b8f" });
+}
+
+async function checkRss() {
+  try {
+    const added = await checkFeedsForFollows();
+    if (added) console.info(`[Poligraph] suivi RSS : ${added} nouvel(s) élément(s)`);
+    await updateBadge();
+  } catch (err) {
+    console.warn(`[Poligraph] suivi RSS impossible (${err.message})`);
+  }
+}
 
 async function tryRefresh() {
   const report = {};
@@ -122,5 +145,22 @@ browser.runtime.onMessage.addListener((msg) => {
   if (msg?.type === "refresh-now") {
     return tryRefresh().then((report) => ({ ok: true, report }))
       .catch((e) => ({ ok: false, error: e.message }));
+  }
+  if (msg?.type === "get-name-index") {
+    // Index compact pour le content script (détection sur les pages).
+    // Mis en cache en storage.session : reconstruit au plus une fois
+    // par session de navigateur, survit à la mort du service worker.
+    return browser.storage.session.get("nameIndex").then(async ({ nameIndex }) => {
+      if (nameIndex) return { index: nameIndex };
+      const index = await buildNameIndex();
+      await browser.storage.session.set({ nameIndex: index }).catch(() => {});
+      return { index };
+    });
+  }
+  if (msg?.type === "check-rss-now") {
+    return checkRss().then(() => ({ ok: true }));
+  }
+  if (msg?.type === "badge-refresh") {
+    return updateBadge().then(() => ({ ok: true }));
   }
 });
