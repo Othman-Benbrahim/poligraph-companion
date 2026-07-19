@@ -8,7 +8,7 @@ web (tooltips, opt-in), suivi d'élus par flux RSS (badge), comparateur,
 fonctionnement hors ligne, et
 assistant IA optionnel en BYOK.
 
-**Version : 0.7.1** — développée en juillet 2026.
+**Version : 0.7.2** — développée en juillet 2026.
 
 ## Sources de données (8)
 
@@ -29,6 +29,13 @@ en open data par les communes (recherche géolocalisée par `geozone`).
 ⚠ **NosDéputés.fr est figé depuis la dissolution de juin 2024** (`enmandat`
 vide) — remplacé par Datan pour les députés. Leçon : chaque source échoue
 indépendamment, le rapport ⟳ du popup affiche l'état de chacune.
+
+**Identification du trafic** : à la demande du créateur de Poligraph, les
+requêtes de l'extension vers poligraph.fr (et uniquement celles-là)
+s'identifient par l'en-tête `User-Agent: PoligraphCompanion/<version>`.
+Aucune donnée utilisateur n'est transmise — juste le nom de l'extension,
+pour qu'il puisse repérer et accompagner ce trafic dans ses logs. La
+navigation manuelle de l'utilisateur sur le site n'est jamais marquée.
 
 ## Architecture
 
