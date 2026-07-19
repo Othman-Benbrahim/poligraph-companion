@@ -1,1 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Poligraph Companion</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="topbar">
+    <span class="brand"><span class="brand-dot" aria-hidden="true"></span>Poligraph <em>Companion</em></span>
+    <span class="topbar-actions">
+      <button id="btn-chat" class="ghost" title="Assistant IA">💬</button>
+      <button id="btn-refresh" class="ghost" title="Actualiser les données">⟳</button>
+    </span>
+  </header>
 
+  <div id="data-age" class="data-age" hidden></div>
+
+  <!-- Vue recherche -->
+  <section id="view-search">
+    <label class="visually-hidden" for="search-input">Rechercher un politicien</label>
+    <input id="search-input" type="search" placeholder="Rechercher un politicien…" autocomplete="off" autofocus />
+    <ul id="results" class="results" role="listbox"></ul>
+    <p id="empty-state" class="empty">Tapez au moins deux lettres pour chercher parmi les représentants indexés par Poligraph.</p>
+  </section>
+
+  <!-- Vue fiche -->
+  <section id="view-fiche" hidden>
+    <button id="btn-back" class="ghost back">← Retour</button>
+
+    <div class="identity">
+      <img id="fiche-photo" alt="" hidden />
+      <div>
+        <h1 id="fiche-name"></h1>
+        <p id="fiche-sub" class="fiche-sub"></p>
+      </div>
+    </div>
+
+    <p id="fiche-bio" class="bio" hidden></p>
+
+    <h2 class="eyebrow">En bref</h2>
+    <dl id="fiche-infos" class="infos"></dl>
+
+    <h2 class="eyebrow" id="contact-title" hidden>Contact</h2>
+    <dl id="fiche-contact" class="infos" hidden></dl>
+
+    <h2 class="eyebrow" id="activite-title" hidden>Activité parlementaire</h2>
+    <dl id="fiche-activite" class="infos" hidden></dl>
+
+    <h2 class="eyebrow" id="hatvp-title" hidden>Transparence — HATVP</h2>
+    <p id="hatvp-note" class="note" hidden>Déclarations remises par l'élu·e à la Haute Autorité
+    pour la transparence de la vie publique (données déclaratives, licence ouverte).
+    Appariement par nom : vérifiez que la qualité indiquée correspond bien à la personne.</p>
+    <ul id="fiche-hatvp" class="cards" hidden></ul>
+    <nav id="pager-hatvp" class="pager" hidden></nav>
+
+    <h2 class="eyebrow" id="delib-title" hidden>Délibérations &amp; actes</h2>
+    <ul id="fiche-delib" class="cards" hidden></ul>
+
+    <p id="fiche-note" class="note" hidden></p>
+
+    <div id="poligraph-sections">
+    <h2 class="eyebrow">Affaires judiciaires <span id="count-affaires" class="count"></span></h2>
+    <ul id="fiche-affaires" class="cards"></ul>
+    <nav id="pager-affaires" class="pager" hidden></nav>
+
+    <h2 class="eyebrow">Fact-checks <span id="count-factchecks" class="count"></span></h2>
+    <ul id="fiche-factchecks" class="cards"></ul>
+    <nav id="pager-factchecks" class="pager" hidden></nav>
+
+    <h2 class="eyebrow">Votes récents <span id="count-votes" class="count"></span></h2>
+    <p id="votes-stats" class="votes-stats" hidden></p>
+    <ul id="fiche-votes" class="cards"></ul>
+    <nav id="pager-votes" class="pager" hidden></nav>
+    </div>
+
+    <a id="fiche-link" class="canonical" target="_blank" rel="noopener">Voir la fiche complète sur poligraph.fr ↗</a>
+  </section>
+
+  <footer class="legal">
+    ⚖ La présomption d'innocence s'applique à toute personne visée par une
+    procédure en cours. L'absence d'information ne préjuge pas de la réalité.
+    Données : <a href="https://poligraph.fr" target="_blank" rel="noopener">Poligraph</a>.
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

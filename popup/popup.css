@@ -1,0 +1,206 @@
+/* ------------------------------------------------------------------
+   Poligraph Companion — popup
+   Direction : registre "observatoire civique". Papier archive, encre
+   documentaire, un seul bleu d'encre officielle. La signature visuelle
+   est le TIMBRE de statut judiciaire : une pastille tamponnée dont la
+   couleur encode l'état réel de la procédure (jamais un jugement moral).
+------------------------------------------------------------------- */
+
+:root {
+  --paper: #f7f6f2;
+  --ink: #1c2333;
+  --ink-soft: #5a6072;
+  --ligne: #e2dfd6;
+  --encre: #2f4b8f;          /* accent unique */
+  --timbre-rouge: #a3271e;   /* condamnation définitive */
+  --timbre-ambre: #9a6b00;   /* procédure en cours */
+  --timbre-vert: #2f6b3a;    /* relaxe / acquittement / non-lieu */
+  --timbre-gris: #6a6f7d;    /* autre / éteint */
+}
+
+* { box-sizing: border-box; margin: 0; }
+
+/* L'attribut HTML hidden doit l'emporter sur tout display explicite
+   (.eyebrow est en flex, .infos en grid : sans cette règle, hidden
+   est silencieusement ignoré sur ces éléments). */
+[hidden] { display: none !important; }
+
+body {
+  width: 380px;
+  max-height: 560px;
+  overflow-y: auto;
+  background: var(--paper);
+  color: var(--ink);
+  font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+  padding: 0 14px 10px;
+}
+
+/* ---------- barre de titre ---------- */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 0 8px;
+  border-bottom: 1px solid var(--ligne);
+}
+.brand { font-weight: 700; letter-spacing: 0.01em; }
+.brand em { font-style: normal; font-weight: 400; color: var(--ink-soft); }
+.brand-dot {
+  display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  background: var(--encre); margin-right: 7px;
+}
+.topbar-actions { display: flex; gap: 2px; }
+.ghost {
+  border: none; background: none; color: var(--encre);
+  font-size: 15px; cursor: pointer; padding: 4px 6px; border-radius: 6px;
+}
+.ghost:hover { background: #ecebe4; }
+.ghost:focus-visible { outline: 2px solid var(--encre); outline-offset: 2px; }
+
+.data-age {
+  font-size: 11px; color: var(--ink-soft);
+  padding: 6px 0 0;
+}
+.data-age.stale { color: var(--timbre-ambre); font-weight: 600; }
+
+/* ---------- recherche ---------- */
+#search-input {
+  width: 100%; margin: 12px 0 8px;
+  padding: 9px 12px;
+  border: 1px solid var(--ligne); border-radius: 8px;
+  background: #fff; color: var(--ink); font-size: 14px;
+}
+#search-input:focus-visible { outline: 2px solid var(--encre); border-color: var(--encre); }
+
+.results { list-style: none; padding: 0; }
+.results li {
+  padding: 8px 10px; border-radius: 8px; cursor: pointer;
+  display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
+}
+.results li:hover, .results li:focus-visible { background: #ecebe4; outline: none; }
+.results .r-name { font-weight: 600; }
+.results .r-meta { font-size: 12px; color: var(--ink-soft); text-align: right; }
+
+.empty { color: var(--ink-soft); font-size: 13px; padding: 14px 4px; }
+
+/* ---------- fiche ---------- */
+.back { margin: 10px 0 4px; padding-left: 0; font-size: 13px; }
+
+.identity { display: flex; gap: 12px; align-items: center; }
+#fiche-photo {
+  width: 52px; height: 52px; border-radius: 8px; object-fit: cover;
+  border: 1px solid var(--ligne); background: #fff; flex-shrink: 0;
+}
+#fiche-name { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; }
+.fiche-sub { color: var(--ink-soft); font-size: 13px; margin: 2px 0 0; }
+
+/* "En bref" : liste de définitions compacte */
+.infos {
+  display: grid; grid-template-columns: max-content 1fr;
+  gap: 3px 12px; font-size: 13px;
+  background: #fff; border: 1px solid var(--ligne); border-radius: 8px;
+  padding: 8px 10px;
+}
+.infos dt { color: var(--ink-soft); }
+.infos dd { margin: 0; overflow-wrap: anywhere; }
+.infos dd a { color: var(--encre); text-decoration: none; }
+.infos dd a:hover { text-decoration: underline; }
+.infos dd .src { color: var(--ink-soft); font-size: 11px; }
+
+.bio {
+  font-size: 12.5px; color: var(--ink);
+  margin-top: 10px; padding: 8px 10px;
+  background: #fff; border-left: 3px solid var(--ligne);
+}
+.bio .src { color: var(--ink-soft); font-size: 11px; }
+.bio a { color: var(--encre); }
+
+.note {
+  font-size: 12px; color: var(--ink-soft);
+  border: 1px dashed var(--ligne); border-radius: 8px;
+  padding: 8px 10px; margin-top: 12px;
+}
+
+.count { font-weight: 400; letter-spacing: 0; text-transform: none; }
+
+.deceased { color: var(--ink-soft); font-size: 12px; margin-top: 2px; }
+
+.votes-stats {
+  font-size: 12px; color: var(--ink-soft);
+  margin: 0 0 6px; padding: 6px 10px;
+  background: #fff; border: 1px solid var(--ligne); border-radius: 8px;
+}
+
+/* timbre secondaire (implication, mention) : plus discret, droit */
+.timbre.mini {
+  transform: none; border-width: 1px; font-weight: 600;
+  opacity: 0.85;
+}
+
+/* pagination compacte */
+.pager {
+  display: flex; align-items: center; justify-content: flex-end;
+  gap: 6px; margin-top: 4px; font-size: 12px; color: var(--ink-soft);
+}
+.pager button {
+  border: 1px solid var(--ligne); background: #fff; color: var(--encre);
+  border-radius: 6px; padding: 2px 9px; cursor: pointer; font-size: 13px;
+}
+.pager button:hover:not(:disabled) { background: #ecebe4; }
+.pager button:disabled { color: var(--ligne); cursor: default; }
+.pager button:focus-visible { outline: 2px solid var(--encre); outline-offset: 1px; }
+
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink-soft);
+  margin: 16px 0 6px;
+  display: flex; align-items: center; gap: 8px;
+}
+.eyebrow::after { content: ""; flex: 1; height: 1px; background: var(--ligne); }
+
+.cards { list-style: none; padding: 0; display: grid; gap: 6px; }
+.cards li {
+  background: #fff; border: 1px solid var(--ligne); border-radius: 8px;
+  padding: 8px 10px; font-size: 13px;
+}
+.cards .c-title { font-weight: 600; }
+.cards .c-meta { color: var(--ink-soft); font-size: 12px; margin-top: 2px; }
+.cards a { color: var(--encre); text-decoration: none; }
+.cards a:hover { text-decoration: underline; }
+.cards .none { border-style: dashed; color: var(--ink-soft); background: transparent; }
+
+/* ---------- timbres de statut (signature visuelle) ---------- */
+.timbre {
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 1px 7px; border-radius: 4px;
+  border: 1.5px solid currentColor;
+  margin-left: 6px; vertical-align: 1px;
+  transform: rotate(-1.2deg); /* léger effet "tamponné" */
+}
+.timbre.rouge { color: var(--timbre-rouge); }
+.timbre.ambre { color: var(--timbre-ambre); }
+.timbre.vert  { color: var(--timbre-vert); }
+.timbre.gris  { color: var(--timbre-gris); }
+
+/* ---------- pied de page légal ---------- */
+.legal {
+  margin-top: 16px; padding-top: 8px;
+  border-top: 1px solid var(--ligne);
+  font-size: 11px; color: var(--ink-soft);
+}
+.legal a { color: var(--encre); }
+
+.canonical {
+  display: inline-block; margin-top: 14px;
+  color: var(--encre); font-weight: 600; font-size: 13px;
+  text-decoration: none;
+}
+.canonical:hover { text-decoration: underline; }
+
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px;
+  clip: rect(0 0 0 0); overflow: hidden;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .results li, .ghost { transition: background 120ms ease; }
+}
