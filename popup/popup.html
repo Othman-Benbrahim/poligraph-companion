@@ -9,6 +9,7 @@
   <header class="topbar">
     <span class="brand"><span class="brand-dot" aria-hidden="true"></span>Poligraph <em>Companion</em></span>
     <span class="topbar-actions">
+      <button id="btn-compare" class="ghost" title="Comparateur d'élus">⇄</button>
       <button id="btn-chat" class="ghost" title="Assistant IA">💬</button>
       <button id="btn-refresh" class="ghost" title="Actualiser les données">⟳</button>
     </span>
@@ -22,6 +23,15 @@
     <input id="search-input" type="search" placeholder="Rechercher un politicien…" autocomplete="off" autofocus />
     <ul id="results" class="results" role="listbox"></ul>
     <p id="empty-state" class="empty">Tapez au moins deux lettres pour chercher parmi les représentants indexés par Poligraph.</p>
+
+    <h2 class="eyebrow" id="suivi-title" hidden>Suivi <span id="suivi-count" class="count"></span></h2>
+    <ul id="suivi-list" class="cards" hidden></ul>
+
+    <label class="toggle">
+      <input type="checkbox" id="detect-toggle" />
+      Détection des élus sur les pages web (tooltips)
+    </label>
+    <p class="toggle-hint">Analyse locale de la page visitée, effective au prochain chargement — rien n'est envoyé nulle part.</p>
   </section>
 
   <!-- Vue fiche -->
@@ -30,10 +40,11 @@
 
     <div class="identity">
       <img id="fiche-photo" alt="" hidden />
-      <div>
+      <div class="identity-main">
         <h1 id="fiche-name"></h1>
         <p id="fiche-sub" class="fiche-sub"></p>
       </div>
+      <button id="btn-follow" class="ghost follow" title="Suivre cet élu (alertes affaires et fact-checks)" hidden>☆</button>
     </div>
 
     <p id="fiche-bio" class="bio" hidden></p>

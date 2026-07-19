@@ -85,6 +85,18 @@ body {
 .back { margin: 10px 0 4px; padding-left: 0; font-size: 13px; }
 
 .identity { display: flex; gap: 12px; align-items: center; }
+.identity-main { flex: 1; min-width: 0; }
+.follow { font-size: 19px; align-self: flex-start; }
+.follow.on { color: var(--timbre-ambre); }
+
+.toggle {
+  display: flex; align-items: center; gap: 8px;
+  margin-top: 16px; padding-top: 10px;
+  border-top: 1px solid var(--ligne);
+  font-size: 12.5px; cursor: pointer;
+}
+.toggle input { accent-color: var(--encre); }
+.toggle-hint { font-size: 11px; color: var(--ink-soft); margin: 3px 0 0 22px; }
 #fiche-photo {
   width: 52px; height: 52px; border-radius: 8px; object-fit: cover;
   border: 1px solid var(--ligne); background: #fff; flex-shrink: 0;

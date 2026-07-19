@@ -10,7 +10,7 @@ import {
   getMeta, seedFromSnapshotIfEmpty,
   setCachedVotes, getCachedVotes,
   searchMaires, mairieContactFor, parlementContactFor, storeDiagnostics, bioFor,
-  deliberationsFor, hatvpFor,
+  deliberationsFor, hatvpFor, getFollows, toggleFollow, getSuiviItems, markSuiviRead,
 } from "../lib/cache.js";
 import { canonicalUrl, fetchVotesJSON } from "../lib/api.js";
 
@@ -153,6 +153,18 @@ async function openFiche(pol) {
   $("fiche-link").href = pol.profileUrl || canonicalUrl(pol.poligraphId);
   $("fiche-link").textContent = "Voir la fiche complète sur poligraph.fr ↗";
 
+  /* ---- bouton suivre ---- */
+  const followBtn = $("btn-follow");
+  followBtn.hidden = false;
+  const follows = await getFollows();
+  const paint = (on) => { followBtn.textContent = on ? "★" : "☆"; followBtn.classList.toggle("on", on); };
+  paint(!!follows[pol.poligraphId]);
+  followBtn.onclick = async () => {
+    const on = await toggleFollow(pol.poligraphId, pol._displayName);
+    paint(on);
+    browser.runtime.sendMessage({ type: "check-rss-now" }).catch(() => {});
+  };
+
   /* ---- en bref ---- */
   const infos = [];
   if (pol.partyFull) infos.push(["Parti", pol.partyFull + (pol.position ? ` (${pol.position.toLowerCase()})` : "")]);
@@ -226,6 +238,7 @@ async function openFiche(pol) {
 
 async function openFicheMaire(m) {
   $("poligraph-sections").hidden = true;
+  $("btn-follow").hidden = true; // les flux Poligraph ne couvrent pas le RNE
 
   $("fiche-name").textContent = m.fullName;
   $("fiche-sub").textContent = `Maire de ${m.commune}`;
@@ -703,6 +716,49 @@ $("btn-chat").addEventListener("click", () => {
   window.close();
 });
 
+$("btn-compare").addEventListener("click", () => {
+  browser.tabs.create({ url: browser.runtime.getURL("compare/compare.html") });
+  window.close();
+});
+
+/* ---------------------- détection sur les pages ---------------------- */
+
+$("detect-toggle").addEventListener("change", async (e) => {
+  await browser.storage.local.set({ detectEnabled: e.target.checked });
+});
+
+/* ----------------------------- suivi RSS ----------------------------- */
+
+async function renderSuivi() {
+  const items = await getSuiviItems();
+  if (items.length === 0) return;
+  const unread = items.filter((i) => i.unread).length;
+  $("suivi-title").hidden = false;
+  $("suivi-list").hidden = false;
+  $("suivi-count").textContent = unread ? `(${unread} nouveau${unread > 1 ? "x" : ""})` : "";
+  const ul = $("suivi-list");
+  ul.replaceChildren();
+  for (const item of items.slice(0, 6)) {
+    const li = document.createElement("li");
+    if (item.unread) li.style.borderColor = "var(--encre)";
+    const a = document.createElement("a");
+    a.className = "c-title";
+    a.href = item.link; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = item.title;
+    const m = document.createElement("div");
+    m.className = "c-meta";
+    m.textContent = [item.feedLabel, item.matchedName, item.date ? frDate(item.date) : null]
+      .filter(Boolean).join(" · ");
+    li.append(a, m);
+    ul.append(li);
+  }
+  // Consultée = lue : on efface le badge.
+  if (unread) {
+    await markSuiviRead();
+    browser.runtime.sendMessage({ type: "badge-refresh" }).catch(() => {});
+  }
+}
+
 $("btn-refresh").addEventListener("click", async () => {
   const btn = $("btn-refresh");
   btn.disabled = true; btn.textContent = "…";
@@ -731,6 +787,10 @@ $("btn-refresh").addEventListener("click", async () => {
   // Version visible : permet de vérifier d'un coup d'œil quelle build tourne.
   const v = browser.runtime.getManifest().version;
   document.querySelector(".legal").append(` v${v}`);
+
+  const { detectEnabled } = await browser.storage.local.get("detectEnabled");
+  $("detect-toggle").checked = !!detectEnabled;
+  renderSuivi();
 
   // Sélection transmise par le menu contextuel ?
   const { pendingQuery } = await browser.storage.session.get("pendingQuery");
