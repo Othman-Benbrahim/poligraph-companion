@@ -3,10 +3,12 @@
 Extension navigateur (Firefox, portable Chrome) : le portail citoyen sur les
 politiques français. Recherche instantanée, fiches complètes (biographie,
 mandat, contact institutionnel, activité parlementaire, affaires judiciaires,
-fact-checks, votes, déclarations HATVP), fonctionnement hors ligne, et
+fact-checks, votes, déclarations HATVP), détection des élus sur les pages
+web (tooltips, opt-in), suivi d'élus par flux RSS (badge), comparateur,
+fonctionnement hors ligne, et
 assistant IA optionnel en BYOK.
 
-**Version : 0.6.1** — développée en juillet 2026.
+**Version : 0.7.0** — développée en juillet 2026.
 
 ## Sources de données (8)
 
@@ -116,14 +118,14 @@ curl -s "https://poligraph.fr/api/export/politiques" \
   > data/snapshot-politiques.json
 ```
 
-## Pistes non réalisées (ou à réaliser) 
+## Pistes non réalisées
 
 - Résumé des rubriques XML des déclarations HATVP (participations
   financières, activités annexes) — nécessite la spec officielle
   `opendata-structure.xlsx` ; ne rien parser sans elle.
 - Portage Chrome effectif ; page d'options générales.
-- Détection des noms sur les pages web (tooltips), suivi via flux RSS,
-  comparateur d'élus.
+- ~~Détection des noms, suivi RSS, comparateur~~ — réalisés en v0.7.0.
+
 - Nuances politiques des municipales (communes ≥ 9 000 hab.) en complément
   de Wikidata ; équivalent Datan côté Sénat.
 - Serveur MCP officiel Poligraph (`ironlam/poligraph-mcp`) comme

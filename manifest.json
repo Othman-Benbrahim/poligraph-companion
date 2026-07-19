@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Poligraph Companion",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Fiches simplifiées des politiciens français : mandats, affaires judiciaires, fact-checks. Données Poligraph.fr, avec cache hors ligne.",
   "browser_specific_settings": {
     "gecko": {
@@ -47,5 +47,19 @@
   "icons": {
     "48": "icons/icon-48.png",
     "96": "icons/icon-96.png"
-  }
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content/detect.js"
+      ],
+      "css": [
+        "content/detect.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
 }
