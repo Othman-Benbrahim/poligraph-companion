@@ -19,6 +19,57 @@ const REFRESH_PERIOD_MIN = 24 * 60; // 24 h
 const RSS_ALARM = "poligraph-rss";
 const RSS_PERIOD_MIN = 6 * 60; // 6 h
 
+/* ------------------- identification du trafic ---------------------- */
+/*
+ * À la demande du créateur de Poligraph : les requêtes de l'extension
+ * vers poligraph.fr s'identifient par un User-Agent dédié, pour qu'il
+ * repère ce trafic dans ses logs (suivi, limites, entraide).
+ *
+ * fetch() ne peut pas modifier User-Agent (en-tête protégé) : on passe
+ * par declarativeNetRequest. Règle de SESSION (réinstallée à chaque
+ * réveil du background), strictement bornée :
+ *   - poligraph.fr uniquement (Wikidata, data.gouv, etc. gardent l'UA
+ *     normal du navigateur) ;
+ *   - tabIds: [-1] = requêtes hors onglet (background + popup), donc
+ *     JAMAIS la navigation de l'utilisateur sur le site poligraph.fr.
+ * Aucune donnée utilisateur : juste le nom et la version de l'extension.
+ */
+const UA_RULE_ID = 1;
+
+async function installUserAgentRule() {
+  try {
+    const version = browser.runtime.getManifest().version;
+    await browser.declarativeNetRequest.updateSessionRules({
+      removeRuleIds: [UA_RULE_ID],
+      addRules: [{
+        id: UA_RULE_ID,
+        priority: 1,
+        action: {
+          type: "modifyHeaders",
+          requestHeaders: [{
+            header: "User-Agent",
+            operation: "set",
+            value: `PoligraphCompanion/${version}`,
+          }],
+        },
+        condition: {
+          urlFilter: "||poligraph.fr/",
+          tabIds: [-1],
+          resourceTypes: ["xmlhttprequest"],
+        },
+      }],
+    });
+    console.info(`[Poligraph] User-Agent identifiant actif : PoligraphCompanion/${version}`);
+  } catch (err) {
+    // DNR ou tabIds non supportés : on n'installe RIEN plutôt que de
+    // risquer de marquer la navigation de l'utilisateur sur le site.
+    console.warn(`[Poligraph] User-Agent identifiant non installé (${err.message})`);
+  }
+}
+
+// À chaque chargement du background (réveil du service worker inclus).
+installUserAgentRule();
+
 /* ------------------------- installation --------------------------- */
 
 browser.runtime.onInstalled.addListener(async () => {
