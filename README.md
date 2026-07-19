@@ -1,6 +1,6 @@
 # Poligraph Companion
 
-Extension navigateur (Firefox, portable Chrome) : le portail citoyen sur les
+Extension navigateur (Firefox, pour l'instant) : le portail citoyen sur les
 politiques français. Recherche instantanée, fiches complètes (biographie,
 mandat, contact institutionnel, activité parlementaire, affaires judiciaires,
 fact-checks, votes, déclarations HATVP), détection des élus sur les pages
