@@ -1,0 +1,51 @@
+{
+  "manifest_version": 3,
+  "name": "Poligraph Companion",
+  "version": "0.6.1",
+  "description": "Fiches simplifiées des politiciens français : mandats, affaires judiciaires, fact-checks. Données Poligraph.fr, avec cache hors ligne.",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "poligraph-companion@example.org",
+      "strict_min_version": "121.0"
+    }
+  },
+  "background": {
+    "scripts": [
+      "background/background.js"
+    ],
+    "service_worker": "background/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Poligraph Companion"
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "permissions": [
+    "storage",
+    "alarms",
+    "contextMenus"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "host_permissions": [
+    "https://poligraph.fr/*",
+    "https://www.wikidata.org/*",
+    "https://*.data.gouv.fr/*",
+    "https://api-lannuaire.service-public.fr/*",
+    "https://www.nosdeputes.fr/*",
+    "https://www.nossenateurs.fr/*",
+    "https://fr.wikipedia.org/*",
+    "https://www.hatvp.fr/*"
+  ],
+  "icons": {
+    "48": "icons/icon-48.png",
+    "96": "icons/icon-96.png"
+  }
+}
