@@ -10,7 +10,7 @@ import {
   getMeta, seedFromSnapshotIfEmpty,
   setCachedVotes, getCachedVotes,
   searchMaires, mairieContactFor, parlementContactFor, storeDiagnostics, bioFor,
-  deliberationsFor, hatvpFor, getFollows, toggleFollow, getSuiviItems, markSuiviRead,
+  deliberationsFor, hatvpFor, hatvpSummaryFor, getFollows, toggleFollow, getSuiviItems, markSuiviRead,
 } from "../lib/cache.js";
 import { canonicalUrl, fetchVotesJSON } from "../lib/api.js";
 
@@ -321,6 +321,39 @@ function resetContact() {
   $("pager-hatvp").hidden = true;
 }
 
+/** Rendu du résumé d'une déclaration d'intérêts dans son panneau. */
+async function renderHatvpSummary(panel, decl) {
+  let summary = null;
+  try { summary = await hatvpSummaryFor(decl._key, decl.nomFichier); } catch { /* réseau */ }
+  panel.replaceChildren();
+
+  if (!summary) {
+    panel.textContent = "Résumé indisponible (XML non publié pour cette déclaration) — consultez le dossier officiel via le lien ci-dessus.";
+    return;
+  }
+  if (summary.length === 0) {
+    panel.textContent = "Toutes les rubriques de cette déclaration sont indiquées « néant » par le déclarant.";
+    return;
+  }
+
+  for (const rub of summary) {
+    const line = document.createElement("div");
+    line.className = "sum-line";
+    const strong = document.createElement("strong");
+    strong.textContent = `${rub.label} (${rub.count})`;
+    line.append(strong);
+    if (rub.names.length) {
+      const more = rub.count - rub.names.length;
+      line.append(` : ${rub.names.join(", ")}${more > 0 ? `, +${more}` : ""}`);
+    }
+    panel.append(line);
+  }
+  const note = document.createElement("div");
+  note.className = "sum-note";
+  note.textContent = "Données déclaratives, résumé sans montants — le détail complet (rémunérations, évaluations, dates) figure sur le dossier officiel HATVP.";
+  panel.append(note);
+}
+
 /**
  * Transparence HATVP. La section n'apparaît QUE si des déclarations
  * existent : afficher « aucune déclaration » sur chaque élu local
@@ -340,6 +373,11 @@ async function loadHatvp(fullName) {
       meta: [d.qualite, (d.dateDepot || d.datePublication) ? `déposée le ${frDate(d.dateDepot || d.datePublication)}` : null,
         d.departement ? `dépt. ${d.departement}` : null].filter(Boolean).join(" · "),
       href: d.urlDossier,
+      // Résumé XML : uniquement pour les déclarations d'intérêts publiées
+      // (le patrimoine n'est pas résumé — consultation encadrée par la loi).
+      expand: (/^di/.test(d.typeDocument) && d.nomFichier)
+        ? (panel) => renderHatvpSummary(panel, d)
+        : undefined,
     }), "");
   } catch { /* store absent : section masquée */ }
 }
@@ -674,7 +712,7 @@ function renderCards(container, rows, mapFn, emptyText) {
     return;
   }
   for (const row of rows) {
-    const { title, timbre, extraTimbre, meta, href } = mapFn(row);
+    const { title, timbre, extraTimbre, meta, href, expand } = mapFn(row);
     const li = document.createElement("li");
 
     const t = document.createElement(href ? "a" : "span");
@@ -698,6 +736,26 @@ function renderCards(container, rows, mapFn, emptyText) {
     m.className = "c-meta";
     m.textContent = meta;
     li.append(m);
+
+    if (expand) {
+      const btn = document.createElement("button");
+      btn.className = "expand-btn";
+      btn.textContent = "Résumé ▾";
+      const panel = document.createElement("div");
+      panel.className = "expand-panel";
+      panel.hidden = true;
+      let loaded = false;
+      btn.addEventListener("click", async () => {
+        if (!panel.hidden) { panel.hidden = true; btn.textContent = "Résumé ▾"; return; }
+        panel.hidden = false;
+        btn.textContent = "Résumé ▴";
+        if (loaded) return;
+        panel.textContent = "chargement…";
+        await expand(panel);
+        loaded = true;
+      });
+      li.append(btn, panel);
+    }
 
     container.append(li);
   }
