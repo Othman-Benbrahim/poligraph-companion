@@ -8,7 +8,7 @@ web (tooltips, opt-in), suivi d'élus par flux RSS (badge), comparateur,
 fonctionnement hors ligne, et
 assistant IA optionnel en BYOK.
 
-**Version : 0.7.2** — développée en juillet 2026.
+**Version : 0.7.4** — développée en juillet 2026.
 
 ## Sources de données (8)
 
