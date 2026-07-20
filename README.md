@@ -8,7 +8,7 @@ web (tooltips, opt-in), suivi d'élus par flux RSS (badge), comparateur,
 fonctionnement hors ligne, et
 assistant IA optionnel en BYOK.
 
-**Version : 0.7.4** — développée en juillet 2026.
+**Version : 0.8.1** — développée en juillet 2026.
 
 ## Sources de données (8)
 
@@ -20,7 +20,7 @@ assistant IA optionnel en BYOK.
 | RNE ([data.gouv.fr](https://www.data.gouv.fr/datasets/repertoire-national-des-elus-1)) | ~35 000 maires (fichier ministère de l'Intérieur) | hebdomadaire | licence ouverte |
 | [Annuaire DILA](https://api-lannuaire.service-public.fr) | Contact mairies (par code INSEE) et ministères | à la demande, cache (échecs 24 h) | licence ouverte |
 | [Datan](https://www.data.gouv.fr/organizations/datan/) | Députés 17e lég. : courriel, site, scores d'activité | hebdomadaire | licence ouverte |
-| NosSénateurs.fr | Sénateurs : courriel institutionnel (best-effort) | hebdomadaire | ODbL |
+| [Sénat](https://data.senat.fr) | Sénateurs en exercice : courriel (si consenti) | hebdomadaire | licence ouverte |
 | [HATVP](https://www.hatvp.fr/open-data/) | Index des déclarations publiées (liste.csv) | hebdomadaire | licence ouverte Etalab |
 
 Catalogue data.gouv.fr en bonus : liens vers les délibérations/actes publiés
