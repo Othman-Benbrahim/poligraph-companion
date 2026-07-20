@@ -10,7 +10,7 @@ import {
   getMeta, seedFromSnapshotIfEmpty,
   setCachedVotes, getCachedVotes,
   searchMaires, mairieContactFor, parlementContactFor, storeDiagnostics, bioFor,
-  deliberationsFor, hatvpFor, hatvpSummaryFor, getFollows, toggleFollow, getSuiviItems, markSuiviRead,
+  deliberationsFor, hatvpFor, hatvpSummaryFor, feedFor, getFollows, toggleFollow, getSuiviItems, markSuiviRead,
 } from "../lib/cache.js";
 import { canonicalUrl, fetchVotesJSON } from "../lib/api.js";
 
@@ -478,7 +478,16 @@ function setContact(rows, ready, title) {
   for (const [k, v] of rows) {
     const dt = document.createElement("dt"); dt.textContent = k;
     const dd = document.createElement("dd");
-    if (v.link) {
+    if (v.links) {
+      // Plusieurs liens sur une ligne (réseaux sociaux) — sobres, sans embeds.
+      v.links.forEach(({ href, text }, i) => {
+        if (i > 0) dd.append(" · ");
+        const a = document.createElement("a");
+        a.href = href; a.textContent = text;
+        a.target = "_blank"; a.rel = "noopener";
+        dd.append(a);
+      });
+    } else if (v.link) {
       const a = document.createElement("a");
       a.href = v.link; a.textContent = v.text;
       if (!v.link.startsWith("mailto:")) { a.target = "_blank"; a.rel = "noopener"; }
@@ -497,6 +506,33 @@ function setContact(rows, ready, title) {
   dl.hidden = rows.length === 0;
 }
 
+/**
+ * Découverte automatique du flux RSS/Atom déclaré par la page officielle
+ * (AN ou Sénat). Domaines pré-autorisés dans le manifest : aucun prompt.
+ * Silencieux si la page ne déclare pas de flux — pas de ligne vide.
+ */
+async function addOfficialFeed(officialUrl) {
+  try {
+    const feed = await feedFor(officialUrl);
+    if (!feed) return;
+    const dl = $("fiche-contact");
+    const dt = document.createElement("dt");
+    dt.textContent = "Flux officiel";
+    const dd = document.createElement("dd");
+    const a = document.createElement("a");
+    a.href = feed; a.target = "_blank"; a.rel = "noopener";
+    a.textContent = feed.replace(/^https?:\/\//, "");
+    dd.append(a);
+    const s = document.createElement("span");
+    s.className = "src";
+    s.textContent = " — RSS de la page officielle";
+    dd.append(s);
+    dl.append(dt, dd);
+    $("contact-title").hidden = false;
+    dl.hidden = false;
+  } catch { /* hors ligne : rien */ }
+}
+
 /** Contact d'un profil Poligraph : Wikidata + parlement + ministère + mairie. */
 async function loadContactPoligraph(pol) {
   const rows = [];
@@ -508,9 +544,10 @@ async function loadContactPoligraph(pol) {
     rows.push(["Courriel", { link: `mailto:${pol.wikidataEmail}`, text: pol.wikidataEmail, src: "Wikidata" }]);
   }
 
-  /* Parlementaire ? (index NosDéputés/NosSénateurs, local) */
+  /* Parlementaire ? (index Datan / Sénat, local) */
+  let parl = null;
   try {
-    const parl = await parlementContactFor(pol._displayName);
+    parl = await parlementContactFor(pol._displayName);
     console.info(`[Poligraph] index parlementaire pour « ${pol._displayName} » :`, parl ? "trouvé" : "absent");
     if (parl) {
       if (parl.email) rows.push([`Courriel ${parl.chambre === "Sénat" ? "Sénat" : "AN"}`,
@@ -520,15 +557,40 @@ async function loadContactPoligraph(pol) {
       }
       renderActivity(parl);
     } else if (/d[ée]put|s[ée]nat/i.test(pol.mandateTitle || pol.mandate || "")) {
-      // Parlementaire d'après son mandat, mais absent de l'index :
-      // l'index n'est probablement pas construit. Le dire, pas le taire.
       fillDl($("fiche-activite"), [["Activité", "index parlementaire non construit — cliquez ⟳ et lisez le rapport par source en haut du popup."]]);
       $("activite-title").hidden = false;
       $("fiche-activite").hidden = false;
     }
   } catch { /* index absent : ignorer */ }
 
+  /* Réseaux sociaux : fusion Wikidata (prioritaire) + Datan, liens sobres. */
+  const SOCIAL_LABELS = { twitter: "X", facebook: "Facebook", instagram: "Instagram", mastodon: "Mastodon" };
+  const merged = { ...(parl?.socials ?? {}), ...(pol.wikidataSocials ?? {}) };
+  const links = Object.entries(SOCIAL_LABELS)
+    .filter(([k]) => merged[k])
+    .map(([k, label]) => ({ href: merged[k], text: label }));
+  if (links.length) {
+    const srcs = [];
+    if (pol.wikidataSocials && Object.keys(pol.wikidataSocials).length) srcs.push("Wikidata");
+    if (parl?.socials && Object.keys(parl.socials).length) srcs.push("Datan");
+    rows.push(["Réseaux", { links, src: srcs.join(" / ") }]);
+  }
+
+  /* Page officielle standardisée de la chambre (AN ou Sénat). */
+  if (parl?.officialUrl) {
+    rows.push(["Page officielle", {
+      link: parl.officialUrl,
+      text: parl.chambre === "Sénat" ? "senat.fr" : "assemblee-nationale.fr",
+      src: "site officiel",
+    }]);
+  }
+
   if (rows.length) setContact(rows, true);
+
+  /* Flux RSS hérité de la page officielle : découverte automatique
+     (domaines pré-autorisés dans le manifest — aucun prompt), silencieuse
+     en cas d'absence. */
+  if (parl?.officialUrl) addOfficialFeed(parl.officialUrl);
 
   const title = pol.mandateTitle || pol.mandate || "";
 
